@@ -1,96 +1,53 @@
-# AI Video Tutorial Task Management System
+# 🎬 AI Video Tutorial Task Management System
 
-## 1. Project Overview
+A professional web-based **AI Video Tutorial Task Management System** designed to manage, monitor, and track the complete workflow of creating AI-powered video tutorials.
 
-The **AI Video Tutorial Task Management System** is a web-based application developed to manage and monitor the workflow involved in creating AI-based educational video tutorials.
+The application helps users manage tutorial tasks, track individual workflow stages, monitor deadlines, generate reports, and maintain reminder logs for overdue work.
 
-The system allows users to:
+## 🚀 Project Overview
 
-- Log in securely to the application
-- Create and manage tutorial tasks
-- Track workflow stages for each task
-- Update task and stage statuses
-- Search and manage task records
-- View task and stage progress
-- Generate task and stage reports
-- Identify overdue stages
-- Apply reminder rules based on overdue duration
-- Maintain a reminder history in the database
+Creating an AI video tutorial involves multiple stages such as image creation, voice-over preparation, screen recording, and video editing. Managing these activities manually can make it difficult to track progress and identify delayed tasks.
 
----
+This system provides a centralized platform to:
 
-## 2. Technology Stack
+* Create and manage tutorial tasks
+* Assign tasks to users
+* Track task deadlines and completion status
+* Monitor individual workflow stages
+* Identify overdue tasks
+* Generate task and stage reports
+* Apply automated reminder rules
+* Maintain a reminder history/log
+* Provide a clean and professional management interface
 
-### Backend
-- Python
-- FastAPI
-- Uvicorn
+## ✨ Key Features
 
-### Frontend
-- HTML5
-- CSS3
-- Jinja2 Templates
+### 🔐 User Authentication
 
-### Database
-- MySQL
-- MySQL Connector for Python
+* Username and password-based login
+* Session-based authentication
+* Logout functionality
+* Forgot Password functionality
+* Username/password management
 
-### Other
-- Starlette Session Middleware
-- Python Multipart
-- Environment variables using `.env`
+### 📋 Task Item Management
 
----
+* Add new tutorial tasks
+* Update existing tasks
+* Delete tasks
+* Search and filter tasks
+* Track:
 
-## 3. Main Features
+  * Task ID
+  * Lesson ID
+  * Assigned user
+  * Start date
+  * Due date
+  * Status
 
-### Login
+### 🔄 Task Stage Management
 
-The application provides a login system using a username and password stored in the MySQL database.
-
-After successful login, the user is redirected to the main menu.
-
----
-
-### Main Menu
-
-The main menu provides navigation to:
-
-1. Task Items
-2. Task Stage
-3. Report
-
----
-
-### Task Items
-
-The Task Items module allows users to:
-
-- View all tutorial tasks
-- Search tasks
-- Add a new task
-- Update an existing task
-- Delete a task
-- View individual task information
-
-Each task contains:
-
-- Task Item ID
-- Lesson ID
-- Assigned To
-- Start Date
-- Due Date
-- Status
-
-When a new task is created, the system automatically creates the required workflow stages.
-
----
-
-### Task Stage
-
-The Task Stage module is used to track the workflow stages of tutorial production.
-
-The application uses five workflow stages:
+Each tutorial task follows a defined workflow:
 
 1. AI Image Creation
 2. Image Voice-over
@@ -98,109 +55,132 @@ The application uses five workflow stages:
 4. Screen Recording Voice-over
 5. Video Editing
 
-Each stage contains:
+Each stage maintains its own status and last-updated date.
 
-- Stage ID
-- Task Item ID
-- Stage Name
-- Stage Status
-- Last Updated Date
-- Status
+### 📊 Reporting Dashboard
 
-Stage statuses can be:
+The report section provides:
 
-- Pending
-- In Progress
-- Completed
+* Total task count
+* Completed task count
+* Pending task count
+* Total workflow stages
+* Completed stages
+* Pending stages
+* Stage-level progress information
+* Due-date monitoring
+* Overdue-day calculation
 
-Users can update the stage information through the Task Stage interface.
+### 🔔 Reminder Management
 
----
+The system applies the following reminder policy:
 
-## 4. Reporting
+* **1+ day overdue → Email**
+* **2+ days overdue → WhatsApp**
+* **5+ days overdue → IVR**
 
-The Report module provides an overview of task and stage progress.
+Reminder actions are recorded in the `REMINDER_LOG` table.
 
-### Task Summary
+Duplicate reminder entries are prevented for the same task, reminder type, and day.
 
-The report displays:
+> Note: The current implementation records reminder actions; it does not actually send Email, WhatsApp, or IVR messages.
 
-- Total Tasks
-- Completed Tasks
-- Pending Tasks
+## 🗄️ Database
 
-### Stage Summary
+The application uses **MySQL**.
 
-The report displays:
+Main database tables:
 
-- Total Stages
-- Completed Stages
-- Pending Stages
+* `USER_TABLE` – Stores login credentials
+* `TASK_ITEM_TABLE` – Stores tutorial task information
+* `TASK_STAGE_TABLE` – Stores workflow stage information
+* `REMINDER_LOG` – Stores generated reminder records
 
-### Stage Report
+The complete database structure and sample data are provided in `database.sql`.
 
-The report also provides detailed information about each workflow stage, including:
+## 🛠️ Technology Stack
 
-- Task Stage ID
-- Task Item ID
-- Lesson ID
-- Stage Name
-- Stage Status
-- Last Updated Date
-- Status
-- Due Date
+**Backend**
 
----
+* Python
+* FastAPI
+* Uvicorn
 
-## 5. Overdue Detection
+**Frontend**
 
-The application checks the due date of incomplete stages.
+* HTML5
+* CSS3
+* Jinja2 Templates
 
-If a stage is incomplete and its task due date has passed, the system calculates the number of overdue days.
+**Database**
 
-The report displays statuses such as:
+* MySQL
+* MySQL Connector/Python
 
-- On Time
-- Completed
-- 1 Day Overdue
-- 2 Days Overdue
-- 5 Days Overdue
+**Other**
 
-and other corresponding overdue durations.
+* Python-dotenv
+* Starlette Session Middleware
 
----
+## 📁 Project Structure
 
-## 6. Reminder System
+`main.py` – FastAPI application and backend routes
+`database.py` – Database connection and database utilities
+`database.sql` – Database schema and sample data
+`requirements.txt` – Python dependencies
+`README.md` – Project documentation
+`templates/` – HTML pages
+`static/` – CSS and frontend assets
 
-The application includes a reminder workflow for overdue tasks.
+## 🔄 Application Workflow
 
-The reminder policy is:
+**Login → Main Menu → Task Items / Task Stage / Report**
 
-| Overdue Duration | Reminder |
-|---|---|
-| 1+ Day | Email |
-| 2+ Days | WhatsApp |
-| 5+ Days | IVR |
+Task Items are created and automatically associated with the predefined workflow stages.
 
-The system currently **logs reminder actions** rather than actually sending external Email, WhatsApp, or IVR messages.
+As stages are updated, the system reflects their current progress in the reporting section.
 
----
+When tasks become overdue, the reminder logic determines the appropriate reminder levels and records them in the reminder log.
 
-## 7. Reminder Log
+## 📌 Main Routes
 
-The `REMINDER_LOG` table stores reminder history.
+* `/` – Login
+* `/login` – User login
+* `/logout` – Logout
+* `/menu` – Main menu
+* `/task-items` – Task management
+* `/task-stage` – Workflow stage management
+* `/report` – Reports and monitoring
+* `/reminder-logs` – Reminder history
+* `/run-reminders` – Execute reminder checking
+* `/database-test` – Database connection test
 
-Each reminder record contains:
+## 🔒 Security Note
 
-- Reminder ID
-- Task Item ID
-- Lesson ID
-- Reminder Type
-- Reminder Date
+Sensitive credentials should not be committed to GitHub.
 
-The system prevents the same reminder type from being logged more than once for the same task on the same day.
+Use environment variables for database configuration and keep `.env` out of the repository.
 
-The reminder log can be checked through:
+## 🎯 Project Objective
 
-```text
-GET /reminder-logs
+The objective of this project is to provide a structured and efficient solution for managing AI video tutorial production activities while demonstrating practical implementation of:
+
+* Web application development
+* REST API development
+* Database management
+* CRUD operations
+* Authentication
+* Workflow management
+* Deadline monitoring
+* Automated reminder logic
+* Reporting and data visualization
+
+## 👩‍💻 Developed By
+
+**Vijitha S**
+
+BCA Graduate | Python | FastAPI | AI/GenAI | SQL | Web Development
+
+## 📄 License
+
+This project was developed as part of an **internship application development task**.
