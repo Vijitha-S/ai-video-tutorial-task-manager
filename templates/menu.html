@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Main Menu - AI Video Tutorial Task Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #f8fafc;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.20), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.14), transparent 30%),
+                #06111f;
+            overflow-x: hidden;
+        }
+
+        /* Background grid */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(to bottom, black, transparent 90%);
+        }
+
+        .menu-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 24px;
+            position: relative;
+        }
+
+        .menu-card {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 650px;
+
+            padding: 55px 65px;
+
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 30px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15, 35, 62, 0.94),
+                    rgba(6, 18, 32, 0.96)
+                );
+
+            box-shadow:
+                0 35px 90px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+
+            backdrop-filter: blur(20px);
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative glow */
+        .menu-card::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(37, 99, 235, 0.15);
+            filter: blur(80px);
+            border-radius: 50%;
+            top: -120px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+        .menu-card::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: rgba(6, 182, 212, 0.08);
+            filter: blur(70px);
+            border-radius: 50%;
+            bottom: -120px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+        /* Header */
+        .menu-header {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 48px;
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .brand-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            background: linear-gradient(
+                135deg,
+                #3b82f6,
+                #2563eb
+            );
+
+            box-shadow:
+                0 12px 30px rgba(37, 99, 235, 0.35);
+        }
+
+        .brand-name {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .menu-header h1 {
+            font-size: clamp(38px, 5vw, 58px);
+            line-height: 1.08;
+            font-weight: 750;
+            letter-spacing: -2px;
+            margin-bottom: 18px;
+        }
+
+        .highlight {
+            background: linear-gradient(
+                90deg,
+                #60a5fa,
+                #38bdf8,
+                #67e8f9
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .menu-subtitle {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #94a3b8;
+            max-width: 650px;
+        }
+
+        /* Section heading */
+        .section-heading {
+            position: relative;
+            z-index: 2;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+        }
+
+        .workspace-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+        }
+
+        /* Menu grid */
+        .menu-options {
+            position: relative;
+            z-index: 2;
+
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .menu-button {
+            min-height: 225px;
+
+            padding: 28px;
+
+            text-decoration: none;
+            color: #f8fafc;
+
+            border-radius: 22px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(20, 42, 70, 0.80),
+                    rgba(10, 25, 43, 0.88)
+                );
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            position: relative;
+            overflow: hidden;
+
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.25s ease,
+                background 0.25s ease;
+        }
+
+        .menu-button:hover {
+            transform: translateY(-7px);
+
+            border-color: rgba(96, 165, 250, 0.55);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(28, 57, 92, 0.95),
+                    rgba(10, 29, 49, 0.96)
+                );
+
+            box-shadow:
+                0 20px 45px rgba(0, 0, 0, 0.30),
+                0 0 35px rgba(37, 99, 235, 0.10);
+        }
+
+        .menu-button::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.08);
+            filter: blur(35px);
+            right: -50px;
+            bottom: -50px;
+        }
+
+        .button-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .menu-icon {
+            width: 54px;
+            height: 54px;
+
+            border-radius: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 24px;
+
+            background: rgba(37, 99, 235, 0.14);
+            border: 1px solid rgba(96, 165, 250, 0.18);
+
+            color: #60a5fa;
+        }
+
+        .arrow {
+            font-size: 23px;
+            color: #64748b;
+
+            transition:
+                transform 0.25s ease,
+                color 0.25s ease;
+        }
+
+        .menu-button:hover .arrow {
+            transform: translateX(5px);
+            color: #60a5fa;
+        }
+
+        .button-content h3 {
+            font-size: 21px;
+            margin-bottom: 9px;
+            font-weight: 700;
+        }
+
+        .button-content p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #8494aa;
+        }
+
+        /* Footer */
+        .menu-footer {
+            position: relative;
+            z-index: 2;
+
+            margin-top: 42px;
+            padding-top: 24px;
+
+            border-top: 1px solid rgba(148, 163, 184, 0.10);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .secure-icon {
+            font-size: 15px;
+        }
+
+        .footer-right {
+            color: #475569;
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+
+            .menu-card {
+                padding: 42px 32px;
+            }
+
+            .menu-options {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-button {
+                min-height: 180px;
+            }
+
+            .menu-header h1 {
+                font-size: 42px;
+            }
+        }
+
+        @media (max-width: 520px) {
+
+            .menu-container {
+                padding: 20px 14px;
+            }
+
+            .menu-card {
+                padding: 32px 22px;
+                border-radius: 24px;
+            }
+
+            .menu-header {
+                margin-bottom: 35px;
+            }
+
+            .brand-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 23px;
+            }
+
+            .menu-header h1 {
+                font-size: 34px;
+                letter-spacing: -1px;
+            }
+
+            .menu-subtitle {
+                font-size: 15px;
+            }
+
+            .section-heading {
+                align-items: flex-start;
+                gap: 12px;
+                flex-direction: column;
+            }
+
+            .menu-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="menu-container">
+
+        <main class="menu-card">
+
+            <!-- Header -->
+            <header class="menu-header">
+
+                <div class="brand-row">
+
+                    <div class="brand-icon">
+                        ⚡
+                    </div>
+
+                    <div class="brand-name">
+                        AI Video Tutorial
+                    </div>
+
+                </div>
+
+                <h1>
+                    Your tutorial
+                    <span class="highlight">workspace.</span>
+                </h1>
+
+                <p class="menu-subtitle">
+                    Plan, manage, monitor, and review every stage
+                    of your AI-powered video tutorial production
+                    from one centralized workspace.
+                </p>
+
+            </header>
+
+
+            <!-- Workspace Section -->
+            <div class="section-heading">
+
+                <h2>Workspace</h2>
+
+                <div class="workspace-status">
+                    <span class="status-dot"></span>
+                    System online
+                </div>
+
+            </div>
+
+
+            <!-- Menu Options -->
+            <div class="menu-options">
+
+                <!-- Task Items -->
+                <a href="/task-items" class="menu-button">
+
+                    <div class="button-top">
+
+                        <div class="menu-icon">
+                            ✓
+                        </div>
+
+                        <div class="arrow">
+                            →
+                        </div>
+
+                    </div>
+
+                    <div class="button-content">
+
+                        <h3>Task Items</h3>
+
+                        <p>
+                            View and manage tutorial tasks,
+                            lessons, assignments, and their
+                            current progress.
+                        </p>
+
+                    </div>
+
+                </a>
+
+
+                <!-- Task Stage -->
+                <a href="/task-stage" class="menu-button">
+
+                    <div class="button-top">
+
+                        <div class="menu-icon">
+                            ◈
+                        </div>
+
+                        <div class="arrow">
+                            →
+                        </div>
+
+                    </div>
+
+                    <div class="button-content">
+
+                        <h3>Task Stage</h3>
+
+                        <p>
+                            Track each production stage and
+                            understand what needs to be completed
+                            next.
+                        </p>
+
+                    </div>
+
+                </a>
+
+
+                <!-- Report -->
+                <a href="/report" class="menu-button">
+
+                    <div class="button-top">
+
+                        <div class="menu-icon">
+                            ↗
+                        </div>
+
+                        <div class="arrow">
+                            →
+                        </div>
+
+                    </div>
+
+                    <div class="button-content">
+
+                        <h3>Reports</h3>
+
+                        <p>
+                            Review completion, overdue work,
+                            progress metrics, and overall
+                            tutorial performance.
+                        </p>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- Footer -->
+            <footer class="menu-footer">
+
+                <div class="footer-left">
+                    <span class="secure-icon">◉</span>
+                    AI Video Tutorial Task Management System
+                </div>
+
+                <div class="footer-right">
+                    Secure Workspace
+                </div>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
